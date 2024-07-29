@@ -1,0 +1,1 @@
+export type RoleAmountStorage<K extends keyof any> = { [P in K]: string };

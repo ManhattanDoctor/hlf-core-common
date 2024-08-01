@@ -4,9 +4,10 @@ import * as _ from 'lodash';
 
 export interface IUser<S = string, R = string> extends IUIDable {
     uid: string;
-    roles?: Array<R>;
-    status: S;
     createdDate: Date;
-    description: string;
+
+    roles?: Array<R>;
+    status?: S;
     cryptoKey?: ICryptoKey;
+    description?: string;
 }

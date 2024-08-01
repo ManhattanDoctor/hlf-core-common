@@ -29,8 +29,8 @@ export interface IStub {
 }
 
 export interface IPutStateOptions {
-    isValidate?: boolean;
     isSortKeys?: boolean;
+    isValidate?: boolean;
     isTransform?: boolean;
 }
 

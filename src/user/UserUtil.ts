@@ -19,15 +19,15 @@ export class UserUtil {
     //
     // --------------------------------------------------------------------------
 
-    public static create<T extends IUser>(classType: ClassType<T>, createdDate: Date, transactionHash: string): T {
+    public static create<T extends IUser>(classType: ClassType<T>, created: Date, transactionHash: string): T {
         let item = new classType();
-        item.uid = UserUtil.createUid(createdDate, transactionHash);
-        item.createdDate = createdDate;
+        item.uid = UserUtil.createUid(created, transactionHash);
+        item.created = created;
         return item;
     }
 
-    public static createUid(createdDate: Date, transactionHash: string): string {
-        let time = UserUtil.MAX_CREATED_DATE.getTime() - createdDate.getTime();
+    public static createUid(created: Date, transactionHash: string): string {
+        let time = UserUtil.MAX_CREATED_DATE.getTime() - created.getTime();
         return `${UserUtil.PREFIX}/${_.padStart(time.toString(), 14, '0')}/${transactionHash}`;
     }
 

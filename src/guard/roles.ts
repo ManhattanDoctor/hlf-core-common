@@ -1,6 +1,6 @@
-import { ExtendedError, getUid, PromiseReflector } from '@ts-core/common';
+import { getUid } from '@ts-core/common';
 import { IUserStubHolder } from '../stub';
-import { UserForbiddenError } from '../ErrorCode';
+import { UserRoleForbiddenError } from '../ErrorCode';
 import * as _ from 'lodash';
 
 // --------------------------------------------------------------------------
@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 export function userRolesCheck(holder: IUserStubHolder, ...roles: Array<string>): void {
     let difference = lack(holder.user.roles, roles);
     if (!_.isEmpty(difference)) {
-        throw new UserForbiddenError(`User "${getUid(holder.user)}" require "${difference.join(', ')}" roles`);
+        throw new UserRoleForbiddenError(holder.user, { has: holder.user.roles, required: roles });
     }
 }
 

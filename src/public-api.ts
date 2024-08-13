@@ -1,10 +1,6 @@
 export * from './ErrorCode';
 export * from './RoleAmountStorage';
 //
-
-export * from './stub/IStub';
-export * from './stub/IStubHolder';
-//
 export * from './user/User';
 export * from './user/UserUtil';
 //

@@ -1,4 +1,4 @@
-import { IPageBookmark, IPaginationBookmark, ClassType, ITransportEvent } from '@ts-core/common';
+import { ITransportCommand, ITransportCommandOptions, ITransportCommandAsync, IPageBookmark, IPaginationBookmark, ClassType, ITransportEvent } from '@ts-core/common';
 import { StateQueryIterator, StateQueryResponse } from './IShim';
 
 export interface IStub {
@@ -9,6 +9,10 @@ export interface IStub {
     readonly transactionHash: string;
     readonly transactionDate: Date;
 
+    invokeSend<U>(command: ITransportCommand<U>, options: ITransportCommandInvokeOptions): void;
+    invokeSendListen<U, V>(command: ITransportCommandAsync<U, V>, options: ITransportCommandInvokeOptions): Promise<V>;
+    invokeChaincode(chaincodeName: string, args: string[], channel: string): Promise<any>;
+    
     loadKV(iterator: StateQueryIterator): Promise<Array<IKeyValue>>;
     getPaginatedKV(request: IPageBookmark, start: string, finish: string): Promise<IPaginationBookmark<IKeyValue>>;
 
@@ -37,4 +41,9 @@ export interface IPutStateOptions {
 export interface IKeyValue {
     key: string;
     value?: string;
+}
+
+export interface ITransportCommandInvokeOptions extends ITransportCommandOptions {
+    channel: string;
+    chaincode: string;
 }

@@ -18,19 +18,18 @@ export class CoinAmountError extends Error<void> {
         super(ErrorCode.COIN_AMOUNT_ERROR, message, details)
     }
 }
-export class UserForbiddenError extends Error<void> {
-    constructor(message: string, details?: any) {
-        super(ErrorCode.USER_ROLE_FORBIDDEN, message, details)
+
+export class UserRoleForbiddenError extends Error<IUserRoleForbiddenErrorDetails> {
+    constructor(user: UID, details: IUserRoleForbiddenErrorDetails) {
+        super(ErrorCode.USER_ROLE_FORBIDDEN, `User "${getUid(user)}" roles forbidden`, details)
     }
 }
-export class ObjectNotFoundError extends Error<void> {
-    constructor(item: UID, message?: string) {
-        super(ErrorCode.OBJECT_NOT_FOUND, !_.isNil(message) ? message : `Ledger object "${getUid(item)}" is nil`)
-    }
+export interface IUserRoleForbiddenErrorDetails {
+    has: Array<string>;
+    required: Array<string>;
 }
 
 export enum ErrorCode {
-    OBJECT_NOT_FOUND = 'HLF_OBJECT_NOT_FOUND',
     COIN_AMOUNT_ERROR = 'HLF_COIN_AMOUNT_ERROR',
     USER_ROLE_FORBIDDEN = 'HLF_USER_ROLE_FORBIDDEN',
 }

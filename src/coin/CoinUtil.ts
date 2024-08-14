@@ -11,10 +11,12 @@ export class CoinUtil {
     // --------------------------------------------------------------------------
 
     public static PREFIX = 'coin';
-    public static COIN_ID_PATTERN = `[A-Z]{1,35}`;
+    public static COIN_ID_PATTERN = '[A-Z]{1,10}';
+    public static OWNER_UID_PATTERN = '[A-Za-z0-9/]*';
 
-    public static UID_REG_EXP = new RegExp(`^${CoinUtil.PREFIX}/[A-Za-z0-9]/${CoinUtil.COIN_ID_PATTERN}$`);
+    public static UID_REG_EXP = new RegExp(`^${CoinUtil.PREFIX}/${CoinUtil.OWNER_UID_PATTERN}/${CoinUtil.COIN_ID_PATTERN}$`);
     public static COIN_ID_REG_EXP = new RegExp(`^${CoinUtil.COIN_ID_PATTERN}$`);
+    public static OWNER_UID_REG_EXP = new RegExp(`^${CoinUtil.OWNER_UID_PATTERN}$`);
 
     // --------------------------------------------------------------------------
     //
@@ -22,16 +24,16 @@ export class CoinUtil {
     //
     // --------------------------------------------------------------------------
 
-    public static create<T extends ICoin>(classType: ClassType<T>, owner: UID, coinId: string, decimals: number): T {
+    public static create<T extends ICoin>(classType: ClassType<T>, coinId: string, decimals: number, owner: UID): T {
         let item = new classType();
-        item.uid = CoinUtil.createUid(owner, coinId);
+        item.uid = CoinUtil.createUid(coinId, owner);
         item.coinId = coinId;
         item.decimals = decimals;
         item.ownerUid = getUid(owner);
         return item;
     }
 
-    public static createUid(owner: UID, coinId: string): string {
+    public static createUid(coinId: string, owner: UID): string {
         return `${CoinUtil.PREFIX}/${getUid(owner)}/${coinId}`;
     }
 

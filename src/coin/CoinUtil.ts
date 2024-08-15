@@ -13,10 +13,12 @@ export class CoinUtil {
     public static PREFIX = 'coin';
     public static COIN_ID_PATTERN = '[A-Z]{1,10}';
     public static OWNER_UID_PATTERN = '[A-Za-z0-9/]*';
+    public static OBJECT_UID_PATTERN = '[A-Za-z0-9/]*';
 
     public static UID_REG_EXP = new RegExp(`^${CoinUtil.PREFIX}/${CoinUtil.OWNER_UID_PATTERN}/${CoinUtil.COIN_ID_PATTERN}$`);
     public static COIN_ID_REG_EXP = new RegExp(`^${CoinUtil.COIN_ID_PATTERN}$`);
     public static OWNER_UID_REG_EXP = new RegExp(`^${CoinUtil.OWNER_UID_PATTERN}$`);
+    public static OBJECT_UID_REG_EXP = new RegExp(`^${CoinUtil.OBJECT_UID_PATTERN}$`);
 
     // --------------------------------------------------------------------------
     //

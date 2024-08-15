@@ -1,4 +1,3 @@
-import { getUid } from '@ts-core/common';
 import { IUserStubHolder } from '../stub';
 import { UserRoleForbiddenError } from '../ErrorCode';
 import * as _ from 'lodash';

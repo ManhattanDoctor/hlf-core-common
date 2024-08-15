@@ -15,9 +15,9 @@ export * from './crypto/ICryptoKey';
 // 
 export * from './coin/Coin';
 export * from './coin/CoinUtil';
+export * from './coin/CoinAmount';
 export * from './coin/CoinBalance';
 export * from './coin/CoinAccount';
-export * from './coin/CoinBalanceStorage';
 //
 export * from './database/DatabaseManager';
 export * from './database/entity/EntityManager';

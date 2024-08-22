@@ -32,6 +32,16 @@ export class CoinBalance extends CoinAccount {
         super.burn(amount);
         this.burned = MathUtil.add(this.burned, amount);
     }
+
+    public emitHeld(amount: string): void {
+        super.emitHeld(amount);
+        this.emitted = MathUtil.add(this.emitted, amount);
+    }
+
+    public burnHeld(amount: string): void {
+        super.burnHeld(amount);
+        this.burned = MathUtil.add(this.burned, amount);
+    }
 }
 
 export interface ICoinBalance extends ICoinAccount {

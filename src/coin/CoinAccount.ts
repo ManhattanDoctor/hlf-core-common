@@ -63,6 +63,13 @@ export class CoinAccount implements ICoinAccount {
         this.inUse = MathUtil.add(this.inUse, amount);
     }
 
+    public emitHeld(amount: string): void {
+        if (MathUtil.lessThanOrEqualTo(amount, '0')) {
+            throw new CoinAmountError('Emitting amount must be granter than zero', amount);
+        }
+        this.held = MathUtil.add(this.held, amount);
+    }
+
     public burn(amount: string): void {
         if (MathUtil.lessThanOrEqualTo(amount, '0')) {
             throw new CoinAmountError('Burning amount must be granter than zero', amount);
@@ -71,6 +78,16 @@ export class CoinAccount implements ICoinAccount {
             throw new CoinAmountError('Burning amount must be less than "isUse" balance', { inUse: this.inUse, amount });
         }
         this.inUse = MathUtil.subtract(this.inUse, amount);
+    }
+
+    public burnHeld(amount: string): void {
+        if (MathUtil.lessThanOrEqualTo(amount, '0')) {
+            throw new CoinAmountError('Burning amount must be granter than zero', amount);
+        }
+        if (MathUtil.greaterThan(amount, this.held)) {
+            throw new CoinAmountError('Burning amount must be less than "held" balance', { held: this.held, amount });
+        }
+        this.held = MathUtil.subtract(this.held, amount);
     }
 
     public hold(amount: string): void {

@@ -47,7 +47,4 @@ export class CoinBalance extends CoinAccount {
 export interface ICoinBalance extends ICoinAccount {
     burned: string;
     emitted: string;
-
-    emit(amount: string): void;
-    burn(amount: string): void;
 }

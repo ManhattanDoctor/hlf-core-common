@@ -1,6 +1,6 @@
 
 import { getUid, MathUtil, UID, IUIDable } from '@ts-core/common';
-import { IsString, IsOptional, IsNumberString } from 'class-validator';
+import { IsString, IsNumberString } from 'class-validator';
 import { CoinAmountError } from '../ErrorCode';
 import * as _ from 'lodash';
 
@@ -135,7 +135,10 @@ export interface ICoinAccount extends IUIDable {
     ownerUid: string;
 
     emit(amount: string): void;
+    emitHeld(amount: string): void;
+    
     burn(amount: string): void;
+    burnHeld(amount: string): void;
 
     hold(amount: string): void;
     unhold(amount: string): void;

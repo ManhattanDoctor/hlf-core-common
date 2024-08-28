@@ -18,6 +18,8 @@ export * from './coin/CoinUtil';
 export * from './coin/CoinAmount';
 export * from './coin/CoinBalance';
 export * from './coin/CoinAccount';
+export * from './coin/manager/CoinManager';
+export * from './coin/manager/CoinAccountManager';
 //
 export * from './database/DatabaseManager';
 export * from './database/entity/EntityManager';

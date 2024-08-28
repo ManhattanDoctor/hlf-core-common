@@ -161,7 +161,6 @@ export interface ICoinMovement {
     coin: Coin;
     account: CoinAccount;
 }
-
 export interface ICoinTransfer {
     to: CoinAccount;
     from: CoinAccount;

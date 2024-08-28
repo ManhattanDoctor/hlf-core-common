@@ -34,9 +34,7 @@ export class CoinManager extends EntityManagerImpl<Coin> {
     // --------------------------------------------------------------------------
 
     public async emit(coin: Coin | string, to: string, amount: string): Promise<ICoinMovement> {
-        if (_.isString(coin)) {
-            coin = await this.get(coin);
-        }
+        coin = await this.coinGet(coin);
         coin.balance.emit(amount);
         coin = await this.save(coin);
 
@@ -47,9 +45,7 @@ export class CoinManager extends EntityManagerImpl<Coin> {
     }
 
     public async emitHeld(coin: Coin | string, to: string, amount: string): Promise<ICoinMovement> {
-        if (_.isString(coin)) {
-            coin = await this.get(coin);
-        }
+        coin = await this.coinGet(coin);
         coin.balance.emitHeld(amount);
         coin = await this.save(coin);
 
@@ -60,9 +56,7 @@ export class CoinManager extends EntityManagerImpl<Coin> {
     }
 
     public async burn(coin: Coin | string, from: string, amount: string): Promise<ICoinMovement> {
-        if (_.isString(coin)) {
-            coin = await this.get(coin);
-        }
+        coin = await this.coinGet(coin);
         coin.balance.burn(amount);
         coin = await this.save(coin);
 
@@ -73,15 +67,35 @@ export class CoinManager extends EntityManagerImpl<Coin> {
     }
 
     public async burnHeld(coin: Coin | string, from: string, amount: string): Promise<ICoinMovement> {
-        if (_.isString(coin)) {
-            coin = await this.get(coin);
-        }
+        coin = await this.coinGet(coin);
         coin.balance.burnHeld(amount);
         coin = await this.save(coin);
 
         let account = await this.accountGet(coin.uid, from);
         account.burnHeld(amount);
         account = await this.accountSet(account);
+        return { coin, account };
+    }
+
+    public async hold(coin: Coin | string, from: string, amount: string): Promise<ICoinMovement> {
+        coin = await this.coinGet(coin);
+        coin.balance.hold(amount);
+        coin = await this.save(coin);
+
+        let account = await this.accountGet(coin.uid, from);
+        account.hold(amount);
+        await this.accountSet(account);
+        return { coin, account };
+    }
+
+    public async unhold(coin: Coin | string, from: string, amount: string): Promise<ICoinMovement> {
+        coin = await this.coinGet(coin);
+        coin.balance.unhold(amount);
+        coin = await this.save(coin);
+
+        let account = await this.accountGet(coin.uid, from);
+        account.unhold(amount);
+        await this.accountSet(account);
         return { coin, account };
     }
 
@@ -95,6 +109,16 @@ export class CoinManager extends EntityManagerImpl<Coin> {
         toAccount.emit(amount);
         toAccount = await this.accountSet(toAccount);
         return { from: fromAccount, to: toAccount };
+    }
+
+    // --------------------------------------------------------------------------
+    //
+    //  Protected Methods
+    //
+    // --------------------------------------------------------------------------
+
+    protected async coinGet(coin: Coin | string): Promise<Coin> {
+        return !_.isString(coin) ? coin : this.get(coin);
     }
 
     // --------------------------------------------------------------------------

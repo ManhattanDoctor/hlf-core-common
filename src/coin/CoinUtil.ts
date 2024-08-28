@@ -1,6 +1,7 @@
 import { ClassType, getUid, MathUtil, MathUtilConfig, UID } from '@ts-core/common';
 import { ICoin } from './Coin';
 import * as _ from 'lodash';
+import { CoinBalance } from './CoinBalance';
 
 export class CoinUtil {
 
@@ -32,6 +33,9 @@ export class CoinUtil {
         item.coinId = coinId;
         item.decimals = decimals;
         item.ownerUid = getUid(owner);
+
+        let balance = item.balance = new CoinBalance();
+        balance.emitted = balance.burned = balance.held = balance.inUse = '0';
         return item;
     }
 

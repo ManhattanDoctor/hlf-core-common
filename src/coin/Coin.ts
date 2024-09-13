@@ -1,6 +1,6 @@
 import { IUIDable } from "@ts-core/common";
 import { CoinBalance, ICoinBalance } from "./CoinBalance";
-import { IsInt, Min, Matches } from 'class-validator';
+import { IsInt, Min, IsDefined, Matches } from 'class-validator';
 import { Type } from 'class-transformer';
 import { CoinUtil } from "./CoinUtil";
 import * as _ from 'lodash';
@@ -27,6 +27,7 @@ export class Coin implements ICoin {
     public coinId: string;
 
     @Type(() => CoinBalance)
+    @IsDefined()
     public balance: CoinBalance;
 
     @IsInt()

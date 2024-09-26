@@ -1,7 +1,7 @@
 export * from './ErrorCode';
 export * from './RoleAmountStorage';
 //
-export * from './user/User';
+export * from './user/IUser';
 export * from './user/UserUtil';
 //
 export * from './guard/roles';

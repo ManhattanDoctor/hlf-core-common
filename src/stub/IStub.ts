@@ -2,17 +2,14 @@ import { ITransportCommand, ITransportCommandOptions, ITransportCommandAsync, IP
 import { StateQueryIterator, StateQueryResponse } from './IShim';
 
 export interface IStub {
-    readonly userId: string;
-    readonly userPublicKey: string;
-
+    readonly user: IStubUser;
     readonly requestId: string;
-    readonly transactionHash: string;
-    readonly transactionDate: Date;
+    readonly transaction: IStubTransaction;
 
     invokeSend<U>(command: ITransportCommand<U>, options: ITransportCommandInvokeOptions): void;
     invokeSendListen<U, V>(command: ITransportCommandAsync<U, V>, options: ITransportCommandInvokeOptions): Promise<V>;
     invokeChaincode(chaincodeName: string, args: string[], channel: string): Promise<any>;
-    
+
     loadKV(iterator: StateQueryIterator): Promise<Array<IKeyValue>>;
     getPaginatedKV(request: IPageBookmark, start: string, finish: string): Promise<IPaginationBookmark<IKeyValue>>;
 
@@ -30,6 +27,16 @@ export interface IStub {
 
     dispatch<T>(event: ITransportEvent<T>): Promise<void>;
     destroyAsync(): Promise<void>;
+}
+
+export interface IStubUser {
+    id: string;
+    publicKey: string;
+}
+
+export interface IStubTransaction {
+    hash: string;
+    date: Date;
 }
 
 export interface IPutStateOptions {

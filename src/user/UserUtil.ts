@@ -1,5 +1,5 @@
 import { ClassType, getUid, UID } from '@ts-core/common';
-import { IUser } from './User';
+import { IUser } from './IUser';
 import * as _ from 'lodash';
 
 export class UserUtil {
@@ -19,16 +19,16 @@ export class UserUtil {
     //
     // --------------------------------------------------------------------------
 
-    public static create<T extends IUser>(classType: ClassType<T>, created: Date, transactionHash: string): T {
+    public static create<T extends IUser>(classType: ClassType<T>, created: Date, hash: string): T {
         let item = new classType();
-        item.uid = UserUtil.createUid(created, transactionHash);
+        item.uid = UserUtil.createUid(created, hash);
         item.created = created;
         return item;
     }
 
-    public static createUid(created: Date, transactionHash: string): string {
+    public static createUid(created: Date, hash: string): string {
         let time = UserUtil.MAX_CREATED_DATE.getTime() - created.getTime();
-        return `${UserUtil.PREFIX}/${_.padStart(time.toString(), 14, '0')}/${transactionHash}`;
+        return `${UserUtil.PREFIX}/${_.padStart(time.toString(), 14, '0')}/${hash}`;
     }
 
     public static createRoot<T extends IUser>(classType: ClassType<T>): T {

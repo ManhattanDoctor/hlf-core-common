@@ -1,7 +1,7 @@
 import { ClassType, getUid, MathUtil, MathUtilConfig, UID } from '@ts-core/common';
 import { ICoin } from './Coin';
-import * as _ from 'lodash';
 import { CoinBalance } from './CoinBalance';
+import * as _ from 'lodash';
 
 export class CoinUtil {
 

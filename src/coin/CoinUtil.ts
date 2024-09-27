@@ -1,7 +1,8 @@
 import { ClassType, getUid, MathUtil, MathUtilConfig, UID } from '@ts-core/common';
-import { ICoin } from './Coin';
+import { Coin, ICoin } from './Coin';
 import { CoinBalance } from './CoinBalance';
 import * as _ from 'lodash';
+import { ICoinAmount } from './CoinAmount';
 
 export class CoinUtil {
 
@@ -41,6 +42,10 @@ export class CoinUtil {
 
     public static createUid(coinId: string, owner: UID): string {
         return `${CoinUtil.PREFIX}/${getUid(owner)}/${coinId}`;
+    }
+
+    public static createAmount(value: string, coin: ICoin): ICoinAmount {
+        return { coinUid: coin.uid, decimals: coin.decimals, value };
     }
 
     public static getCoinId<T = string>(coin: UID): T {

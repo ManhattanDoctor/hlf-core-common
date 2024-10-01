@@ -18,17 +18,7 @@ export class CoinAmountError extends Error<void> {
         super(ErrorCode.COIN_AMOUNT_ERROR, message, details)
     }
 }
-export class UserRoleForbiddenError extends Error<IUserRoleForbiddenErrorDetails> {
-    constructor(user: UID, details: IUserRoleForbiddenErrorDetails) {
-        super(ErrorCode.USER_ROLE_FORBIDDEN, `User "${getUid(user)}" roles forbidden`, details)
-    }
-}
-export interface IUserRoleForbiddenErrorDetails {
-    has: Array<string>;
-    required: Array<string>;
-}
 
 export enum ErrorCode {
-    COIN_AMOUNT_ERROR = 'COIN_AMOUNT_ERROR',
-    USER_ROLE_FORBIDDEN = 'USER_ROLE_FORBIDDEN',
+    COIN_AMOUNT_ERROR = 'COIN_AMOUNT_ERROR'
 }

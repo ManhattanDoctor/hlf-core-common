@@ -134,6 +134,9 @@ export interface ICoinAccount extends IUIDable {
     inUse: string;
     ownerUid: string;
 
+    isEmpty(): boolean;
+    getTotal(): string;
+    
     emit(amount: string): void;
     emitHeld(amount: string): void;
     
@@ -142,8 +145,5 @@ export interface ICoinAccount extends IUIDable {
 
     hold(amount: string): void;
     unhold(amount: string): void;
-
-    isEmpty(): boolean;
-    getTotal(): string;
 }
 

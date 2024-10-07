@@ -1,9 +1,8 @@
-import { IsString, IsInt } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export interface ICoinAmount {
     value: string;
     coinUid: string;
-    decimals: number;
 }
 
 export class CoinAmount implements ICoinAmount {
@@ -12,7 +11,4 @@ export class CoinAmount implements ICoinAmount {
 
     @IsString()
     coinUid: string;
-
-    @IsInt()
-    decimals: number;
 }

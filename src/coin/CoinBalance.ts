@@ -7,6 +7,18 @@ export class CoinBalance extends CoinAccount {
 
     // --------------------------------------------------------------------------
     //
+    //  Static Methods
+    //
+    // --------------------------------------------------------------------------
+
+    public static create(): CoinBalance {
+        let item = new CoinBalance();
+        item.emitted = item.burned = item.held = item.inUse = '0';
+        return item;
+    }
+
+    // --------------------------------------------------------------------------
+    //
     //  Properties
     //
     // --------------------------------------------------------------------------

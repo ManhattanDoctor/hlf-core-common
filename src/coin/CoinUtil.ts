@@ -1,8 +1,8 @@
 import { ClassType, getUid, MathUtil, MathUtilConfig, UID } from '@ts-core/common';
-import { Coin, ICoin } from './Coin';
+import { ICoin } from './Coin';
 import { CoinBalance } from './CoinBalance';
-import * as _ from 'lodash';
 import { ICoinAmount } from './CoinAmount';
+import * as _ from 'lodash';
 
 export class CoinUtil {
 
@@ -46,18 +46,31 @@ export class CoinUtil {
     }
 
     public static getCoinId<T = string>(coin: UID): T {
-        let uid = getUid(coin);
-        return !_.isNil(uid) ? uid.split('/')[3] as T : null;
+        let { coinId } = CoinUtil.decomposeUid(coin);
+        return coinId as T;
     }
 
     public static getOwnerUid(coin: UID): string {
-        let uid = getUid(coin);
-        return !_.isNil(uid) ? uid.split('/')[1] : null;
+        let { ownerUid } = CoinUtil.decomposeUid(coin);
+        return ownerUid;
     }
 
     public static getCoinDecimals(coin: UID): number {
+        let { decimals } = CoinUtil.decomposeUid(coin);
+        return decimals;
+    }
+
+    private static decomposeUid(coin: UID): IUidDecomposition {
+        let item = { coinId: null, decimals: null, ownerUid: null };
         let uid = getUid(coin);
-        return !_.isNil(uid) ? parseInt(uid.split('/')[2]) : null;
+        if (!_.isEmpty(uid)) {
+            let array = uid.split('/');
+            let length = array.length;
+            item.coinId = array[length - 1];
+            item.ownerUid = `${array[1]}/${array[2]}`;
+            item.decimals = parseInt(array[length - 2])
+        }
+        return item;
     }
 
     // --------------------------------------------------------------------------
@@ -106,5 +119,11 @@ export class CoinUtil {
     private static set config(item: MathUtilConfig) {
         MathUtil.config = _.isNil(item) ? { toExpNeg: -100, toExpPos: 100, precision: 100 } : item;
     }
+}
+
+interface IUidDecomposition {
+    coinId: string;
+    decimals: number;
+    ownerUid: string;
 }
 

@@ -35,7 +35,7 @@ export class UserUtil {
         return UserUtil.create(classType, new Date(2000, 0), _.padStart('0', 64, '0'));
     }
 
-    public static IsUser(uid: UID): boolean {
+    public static isUser(uid: UID): boolean {
         return UserUtil.UID_REG_EXP.test(getUid(uid));
     }
 }

@@ -26,7 +26,7 @@ export class CoinUtil {
 
     // --------------------------------------------------------------------------
     //
-    //  Static Methods
+    //  Public Methods
     //
     // --------------------------------------------------------------------------
 
@@ -45,6 +45,10 @@ export class CoinUtil {
         return { coinUid: coin.uid, value };
     }
 
+    public static isUser(uid: UID): boolean {
+        return CoinUtil.UID_REG_EXP.test(getUid(uid));
+    }
+
     public static getCoinId<T = string>(coin: UID): T {
         let { coinId } = CoinUtil.decomposeUid(coin);
         return coinId as T;
@@ -59,6 +63,12 @@ export class CoinUtil {
         let { decimals } = CoinUtil.decomposeUid(coin);
         return decimals;
     }
+
+    // --------------------------------------------------------------------------
+    //
+    //  Private Methods
+    //
+    // --------------------------------------------------------------------------
 
     private static decomposeUid(coin: UID): IUidDecomposition {
         let item = { coinId: null, decimals: null, ownerUid: null };

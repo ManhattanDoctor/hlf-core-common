@@ -1,4 +1,4 @@
-import { ExtendedError, getUid, UID } from '@ts-core/common';
+import { ExtendedError } from '@ts-core/common';
 import * as _ from 'lodash';
 
 export class Error<C, D = any> extends ExtendedError<D, C | ErrorCode> {

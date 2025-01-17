@@ -118,13 +118,13 @@ export class CoinAccount implements ICoinAccount {
     //
     // --------------------------------------------------------------------------
 
-    public getTotal(): string {
-        return MathUtil.add(this.held, this.inUse);
-    }
-
     public isEmpty(): boolean {
         let item = this.getTotal();
         return _.isNil(item) || MathUtil.equals(item, '0');
+    }
+    
+    public getTotal(): string {
+        return MathUtil.add(this.held, this.inUse);
     }
 }
 

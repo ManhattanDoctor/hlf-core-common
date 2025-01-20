@@ -1,2 +1,2 @@
-export * from './ErrorCode';
+export * from './Error';
 export * from './RoleAmountStorage';

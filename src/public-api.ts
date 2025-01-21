@@ -1,5 +1,3 @@
-export * from './Error';
-export * from './RoleAmountStorage';
 //
 export * from './user/IUser';
 export * from './user/UserUtil';

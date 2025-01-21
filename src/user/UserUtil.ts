@@ -11,7 +11,6 @@ export class UserUtil {
 
     public static PREFIX = 'user';
     public static UID_REG_EXP = new RegExp(`^${UserUtil.PREFIX}/[0-9]{14}/[0-9a-fA-F]{64}$`);
-    public static MAX_CREATED_DATE = new Date(2500, 0);
 
     // --------------------------------------------------------------------------
     //
@@ -27,15 +26,20 @@ export class UserUtil {
     }
 
     public static createUid(created: Date, hash: string): string {
-        let time = UserUtil.MAX_CREATED_DATE.getTime() - created.getTime();
-        return `${UserUtil.PREFIX}/${_.padStart(time.toString(), 14, '0')}/${hash}`;
-    }
-
-    public static createRoot<T extends IUser>(classType: ClassType<T>): T {
-        return UserUtil.create(classType, new Date(2000, 0), _.padStart('0', 64, '0'));
+        return `${UserUtil.PREFIX}/${_.padStart(created.getTime().toString(), 14, '0')}/${hash}`;
     }
 
     public static isUser(uid: UID): boolean {
         return UserUtil.UID_REG_EXP.test(getUid(uid));
+    }
+
+    public static seed<T extends IUser>(classType: ClassType<T>, created?: Date, hash?: string): T {
+        if (_.isNil(created)) {
+            created = new Date(2000, 0);
+        }
+        if (_.isNil(hash)) {
+            hash = _.padStart('0', 64, '0');
+        }
+        return UserUtil.create(classType, created, hash);
     }
 }

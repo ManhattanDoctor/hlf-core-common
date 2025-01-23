@@ -10,7 +10,7 @@ export class UserUtil {
     // --------------------------------------------------------------------------
 
     public static PREFIX = 'user';
-    public static UID_REG_EXP = new RegExp(`^${UserUtil.PREFIX}/[0-9]{14}/[0-9a-fA-F]{64}$`);
+    public static UID_REG_EXP = new RegExp(`^${UserUtil.PREFIX}_[0-9]{14}_[0-9a-fA-F]{64}$`);
 
     // --------------------------------------------------------------------------
     //
@@ -26,7 +26,7 @@ export class UserUtil {
     }
 
     public static createUid(created: Date, hash: string): string {
-        return `${UserUtil.PREFIX}/${_.padStart(created.getTime().toString(), 14, '0')}/${hash}`;
+        return `${UserUtil.PREFIX}_${_.padStart(created.getTime().toString(), 14, '0')}_${hash}`;
     }
 
     public static isUser(uid: UID): boolean {

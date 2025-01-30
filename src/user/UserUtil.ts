@@ -35,7 +35,7 @@ export class UserUtil {
 
     public static seed<T extends IUser>(classType: ClassType<T>, created?: Date, hash?: string): T {
         if (_.isNil(created)) {
-            created = new Date(2000, 0);
+            created = new Date(0);
         }
         if (_.isNil(hash)) {
             hash = _.padStart('0', 64, '0');

@@ -6,3 +6,4 @@ export * from './crypto/CryptoKey';
 export * from './crypto/ICryptoKey';
 // 
 export * from './transport/HlfTransportCommand';
+export * from './transport/IInitiatedDto';

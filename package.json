@@ -1,7 +1,7 @@
 {
     "name": "@hlf-core/common",
     "version": "3.2.6",
-    "description": "Classes and utils for hlf-core-common",
+    "description": "TypeScript library with core classes shared across hlf-core packages: Hyperledger Fabric state key building, user identifiers, crypto keys, transport commands and domain errors",
     "main": "./cjs/public-api.js",
     "module": "./esm/public-api.js",
     "exports": {
@@ -28,6 +28,14 @@
         "url": "git+https://github.com/ManhattanDoctor/hlf-core-common.git"
     },
     "keywords": [
+        "hyperledger",
+        "hyperledger-fabric",
+        "fabric",
+        "chaincode",
+        "blockchain",
+        "distributed-ledger",
+        "state-key",
+        "composite-key",
         "typescript"
     ],
     "bugs": {

@@ -461,4 +461,21 @@ src/
 
 ## Лицензия
 
-ISC © Renat Gubaev
+ISC
+
+## Автор
+
+**Ренат Губаев**
+- Email: renat.gubaev@gmail.com
+- GitHub: [@ManhattanDoctor](https://github.com/ManhattanDoctor)
+
+## Ссылки
+
+- [GitHub Repository](https://github.com/ManhattanDoctor/hlf-core-common)
+- [NPM Package](https://www.npmjs.com/package/@hlf-core/common)
+- [Issue Tracker](https://github.com/ManhattanDoctor/hlf-core-common/issues)
+- [Hyperledger Fabric Documentation](https://hyperledger-fabric.readthedocs.io/)
+
+## Поддержка
+
+Если вы нашли баг или у вас есть предложение по улучшению, пожалуйста, создайте issue в [GitHub Issues](https://github.com/ManhattanDoctor/hlf-core-common/issues).

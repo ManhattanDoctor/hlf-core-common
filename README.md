@@ -1,25 +1,30 @@
+**English** · [Русский](./README.ru.md)
+
 # @hlf-core/common
 
-> TypeScript библиотека с базовыми классами экосистемы hlf-core: ключи состояния, идентификаторы, транспортные команды
+> TypeScript library with the base classes of the hlf-core ecosystem: state keys, identifiers, transport commands
 
 [![npm version](https://img.shields.io/npm/v/@hlf-core/common.svg)](https://www.npmjs.com/package/@hlf-core/common)
+[![Docs](https://img.shields.io/badge/docs-hlf.gnosisai.ru-1f6feb)](https://hlf.gnosisai.ru/docs/packages/common)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 
-Базовые классы и утилиты, общие для всех пакетов экосистемы `@hlf-core`: формирование ключей состояния Hyperledger Fabric, идентификаторы пользователей, криптографические ключи, транспортные команды и доменные ошибки.
+Full documentation: https://hlf.gnosisai.ru/docs/packages/common
 
-Пакет не зависит ни от `fabric-shim`, ни от chaincode-окружения, поэтому используется одинаково в chaincode, backend и frontend.
+Base classes and utilities shared by every package in the `@hlf-core` ecosystem: Hyperledger Fabric state key construction, user identifiers, cryptographic keys, transport commands, and domain errors.
 
-## Содержание
+The package depends neither on `fabric-shim` nor on the chaincode runtime, so it works identically in chaincode, backend, and frontend.
 
-- [Описание](#описание)
-  - [Основные возможности](#основные-возможности)
-- [Установка](#установка)
-  - [Зависимости](#зависимости)
-- [Быстрый старт](#быстрый-старт)
-- [Ключи состояния](#ключи-состояния)
-  - [Как устроено хранилище Fabric](#как-устроено-хранилище-fabric)
-  - [Почему префикс должен заканчиваться разделителем](#почему-префикс-должен-заканчиваться-разделителем)
-- [API документация](#api-документация)
+## Table of Contents
+
+- [Overview](#overview)
+  - [Key Features](#key-features)
+- [Installation](#installation)
+  - [Dependencies](#dependencies)
+- [Quick Start](#quick-start)
+- [State Keys](#state-keys)
+  - [How Fabric storage works](#how-fabric-storage-works)
+  - [Why a prefix must end with a separator](#why-a-prefix-must-end-with-a-separator)
+- [API Reference](#api-reference)
   - [StateKey](#statekey)
   - [UserUtil](#userutil)
   - [IUser](#iuser)
@@ -27,30 +32,30 @@
   - [HlfTransportCommand](#hlftransportcommand)
   - [InitiatedDto](#initiateddto)
   - [Error](#error)
-- [Примеры использования](#примеры-использования)
-- [Структура проекта](#структура-проекта)
-- [История изменений](#история-изменений)
+- [Usage Examples](#usage-examples)
+- [Project Structure](#project-structure)
+- [Changelog](#changelog)
 
-## Описание
+## Overview
 
-`@hlf-core/common` — нижний уровень экосистемы. Он содержит то, что нужно всем остальным пакетам и не привязано к среде исполнения: правила формирования ключей состояния, схему идентификаторов пользователя, описание криптографического ключа, базовые транспортные команды и каркас доменных ошибок.
+`@hlf-core/common` is the lowest layer of the ecosystem. It holds what every other package needs and what is not tied to the runtime environment: the rules for building state keys, the user identifier schema, the cryptographic key description, the base transport commands, and the domain error framework.
 
-### Основные возможности
+### Key Features
 
-- **Единая сборка ключей состояния** — `StateKey` формирует ключи и префиксы поиска по одним правилам, с обязательным разделителем и валидацией частей
-- **Идентификаторы пользователей** — `UserUtil` создаёт и проверяет `uid` вида `user_<время>_<хэш>`
-- **Криптографические ключи** — `CryptoKey` описывает пару «значение + алгоритм» с валидацией
-- **Транспортные команды** — `HlfTransportCommand` и `HlfTransportCommandAsync` с признаком `isReadonly` для разделения запросов на чтение и запись
-- **Инициатор операции** — `InitiatedDto` добавляет к любому DTO поле `initiatorUid`
-- **Доменные ошибки** — базовый `Error` с кодами `ErrorCode`, совместимый с `ExtendedError` из `@ts-core/common`
+- **Unified state key construction** — `StateKey` builds keys and search prefixes by the same rules, with a mandatory separator and segment validation
+- **User identifiers** — `UserUtil` creates and validates a `uid` of the form `user_<time>_<hash>`
+- **Cryptographic keys** — `CryptoKey` describes a "value + algorithm" pair with validation
+- **Transport commands** — `HlfTransportCommand` and `HlfTransportCommandAsync` with an `isReadonly` flag to separate read requests from write requests
+- **Operation initiator** — `InitiatedDto` adds an `initiatorUid` field to any DTO
+- **Domain errors** — a base `Error` with `ErrorCode` codes, compatible with `ExtendedError` from `@ts-core/common`
 
-## Установка
+## Installation
 
 ```bash
 npm install @hlf-core/common
 ```
 
-### Зависимости
+### Dependencies
 
 ```json
 {
@@ -58,70 +63,70 @@ npm install @hlf-core/common
 }
 ```
 
-Пакет поставляется в двух сборках — ESM (`./esm/public-api.js`) и CommonJS (`./cjs/public-api.js`), выбор происходит автоматически через поле `exports`.
+The package ships in two builds — ESM (`./esm/public-api.js`) and CommonJS (`./cjs/public-api.js`) — and the right one is selected automatically through the `exports` field.
 
-## Быстрый старт
+## Quick Start
 
 ```ts
 import { StateKey, UserUtil } from '@hlf-core/common';
 
-// пространство ключей для аккаунтов
+// key namespace for accounts
 let key = new StateKey('→coin~account');
 
-// точный ключ записи
+// exact record key
 let uid = key.key('coin_user_X_0_RUB', 'user_00000000000000_abc');
 // →coin~account:coin_user_X_0_RUB~user_00000000000000_abc
 
-// префикс для перечисления всех аккаунтов монеты
+// prefix to enumerate every account of a coin
 let prefix = key.prefix('coin_user_X_0_RUB');
 // →coin~account:coin_user_X_0_RUB~
 
-// идентификатор пользователя
+// user identifier
 let userUid = UserUtil.createUid(new Date(), hash);
 // user_01752065464752_9c6d51852f75...
 ```
 
-## Ключи состояния
+## State Keys
 
-### Как устроено хранилище Fabric
+### How Fabric storage works
 
-Состояние Hyperledger Fabric — это упорядоченный словарь «ключ → значение». Найти запись можно двумя способами: по точному ключу либо диапазонным запросом (`getStateByRange`), который возвращает всё, что лексикографически попадает между двумя строками. На практике диапазон почти всегда используется как «всё, что начинается с указанной строки».
+Hyperledger Fabric state is an ordered "key → value" dictionary. A record can be found in two ways: by its exact key, or with a range query (`getStateByRange`) that returns everything lexicographically falling between two strings. In practice, a range is almost always used as "everything that starts with the given string".
 
-Отсюда следует главное правило: **вторичный поиск возможен только по левой части ключа**. Поэтому ключи составные — из нескольких частей, от общего к частному:
+From this follows the main rule: **secondary lookup is only possible on the left part of the key**. That is why keys are composite — made of several segments, from the general to the specific:
 
 ```
 →coin~account:coin_user_X_0_RUB~user_00000000000000_abc
-└─ пространство ┘└──── монета ───┘└────── владелец ─────┘
+└─ namespace ───┘└───── coin ────┘└─────── owner ───────┘
 ```
 
-Такой ключ обслуживает два сценария сразу: прочитать конкретный аккаунт по полному ключу и перечислить все аккаунты монеты по префиксу.
+Such a key serves two scenarios at once: reading a specific account by its full key and enumerating every account of a coin by prefix.
 
-### Почему префикс должен заканчиваться разделителем
+### Why a prefix must end with a separator
 
-Префикс поиска — это **полный ключ плюс разделитель**, а не «ключ без последней части». Разница принципиальна.
+A search prefix is **the full key plus a separator**, not "the key without its last segment". The difference is fundamental.
 
-Если собрать префикс без завершающего разделителя, диапазонный запрос захватит соседние записи, чей идентификатор начинается так же:
+If you build a prefix without the trailing separator, the range query will capture neighboring records whose identifier starts the same way:
 
 ```
-префикс:  →coin~account:coin_user_X_0_RUB
+prefix:  →coin~account:coin_user_X_0_RUB
 
-попадает под него:
-  →coin~account:coin_user_X_0_RUB~user_abc            нужная запись
-  →coin~account:coin_user_X_0_RUB2~user_xyz           ЧУЖАЯ монета RUB2
-  →coin~account:coin_user_X_0_RUB.SERIES.1~user_xyz   ЧУЖАЯ серийная монета
+matched by it:
+  →coin~account:coin_user_X_0_RUB~user_abc            the intended record
+  →coin~account:coin_user_X_0_RUB2~user_xyz           ANOTHER coin RUB2
+  →coin~account:coin_user_X_0_RUB.SERIES.1~user_xyz   ANOTHER serial coin
 ```
 
-Строка `coin_user_X_0_RUB` является началом строки `coin_user_X_0_RUB2`, и хранилище честно вернёт обе. Ошибка не проявляется, пока в системе нет монет с идентификатором-префиксом, а затем приводит к операциям над чужими записями.
+The string `coin_user_X_0_RUB` is the beginning of the string `coin_user_X_0_RUB2`, and the store faithfully returns both. The bug stays invisible until the system has coins whose identifier is a prefix of another, and then it leads to operations on records that belong to someone else.
 
-С завершающим разделителем этого не происходит: у чужой монеты на этой позиции стоит `2` или `.`, а не `~`.
+With a trailing separator this does not happen: at that position another coin has a `2` or a `.`, not a `~`.
 
-`StateKey` делает такую ошибку невозможной: другого способа получить префикс, кроме метода `prefix()`, у вызывающего кода нет.
+`StateKey` makes such a mistake impossible: the calling code has no way to obtain a prefix other than the `prefix()` method.
 
-## API документация
+## API Reference
 
 ### StateKey
 
-Сборщик ключей состояния. Создаётся один раз на пространство имён и дальше используется для всех ключей этого пространства.
+A state key builder. It is created once per namespace and then used for every key in that namespace.
 
 ```ts
 import { StateKey } from '@hlf-core/common';
@@ -129,16 +134,16 @@ import { StateKey } from '@hlf-core/common';
 let key = new StateKey('→coin~account');
 ```
 
-#### Статические свойства
+#### Static properties
 
-| Свойство | Значение | Назначение |
+| Property | Value | Purpose |
 |---|---|---|
-| `StateKey.SEGMENT` | `~` | разделитель частей ключа |
-| `StateKey.NAMESPACE` | `:` | разделитель пространства имён и частей |
+| `StateKey.SEGMENT` | `~` | separator between key segments |
+| `StateKey.NAMESPACE` | `:` | separator between the namespace and the segments |
 
 #### `key(...items: Array<UID>): string`
 
-Возвращает точный ключ записи. Части соединяются разделителем `~`.
+Returns the exact record key. Segments are joined with the `~` separator.
 
 ```ts
 key.key('coin_RUB', 'user_abc');   // →coin~account:coin_RUB~user_abc
@@ -146,11 +151,11 @@ key.key('coin_RUB');               // →coin~account:coin_RUB
 key.key();                         // →coin~account:
 ```
 
-Используется там, где адресуется ровно один объект: чтение, запись, удаление.
+Used wherever exactly one object is addressed: read, write, delete.
 
 #### `prefix(...items: Array<UID>): string`
 
-Возвращает префикс для диапазонного запроса — ключ с завершающим разделителем.
+Returns the prefix for a range query — a key with a trailing separator.
 
 ```ts
 key.prefix('coin_RUB');              // →coin~account:coin_RUB~
@@ -158,33 +163,33 @@ key.prefix('coin_RUB', 'user_abc');  // →coin~account:coin_RUB~user_abc~
 key.prefix();                        // →coin~account:
 ```
 
-Вызов без аргументов даёт префикс всего пространства имён — им перечисляются все записи этого вида.
+A call with no arguments yields the prefix of the whole namespace — use it to enumerate every record of this kind.
 
 #### `isKey(item: UID): boolean`
 
-Проверяет, принадлежит ли ключ этому пространству имён.
+Checks whether a key belongs to this namespace.
 
 ```ts
 key.isKey('→coin~account:coin_RUB~user_abc');  // true
 key.isKey('→link~account~otc:coin_RUB~...');   // false
 ```
 
-Полезно, когда по одному диапазону идут записи разных видов.
+Useful when records of different kinds share a single range.
 
 #### `decompose(item: UID): Array<string>`
 
-Разбирает ключ обратно на части. Возвращает `null`, если ключ принадлежит другому пространству имён.
+Splits a key back into its segments. Returns `null` if the key belongs to a different namespace.
 
 ```ts
 key.decompose('→coin~account:coin_RUB~user_abc');  // ['coin_RUB', 'user_abc']
 key.decompose('→link~account~otc:coin_RUB~...');   // null
 ```
 
-Заменяет ручной разбор строки через `split` и `indexOf`.
+Replaces manual string parsing with `split` and `indexOf`.
 
-#### Правила для частей ключа
+#### Rules for key segments
 
-Каждая часть проверяется перед склейкой. Часть не может быть пустой и не может содержать `~` или `:`:
+Each segment is validated before being joined. A segment cannot be empty and cannot contain `~` or `:`:
 
 ```ts
 key.key('a~b');   // StateKeySegmentInvalidError
@@ -192,13 +197,13 @@ key.key('a:b');   // StateKeySegmentInvalidError
 key.key('');      // StateKeySegmentInvalidError
 ```
 
-Причина: разделитель внутри значения сдвигает границу между частями, и ключ бесшумно «разъезжается» — поиск по префиксу начинает возвращать не то, что ожидалось. Лучше упасть на записи, чем получить неверную выборку при чтении.
+The reason: a separator inside a value shifts the boundary between segments, and the key silently drifts — a prefix search starts returning something other than what was expected. It is better to fail on write than to get an incorrect selection on read.
 
-Само пространство имён не проверяется — оно задаётся разработчиком один раз и может содержать любые символы, включая `~` (например, `→coin~account`).
+The namespace itself is not validated — it is set once by the developer and may contain any characters, including `~` (for example, `→coin~account`).
 
 ### UserUtil
 
-Формирование и проверка идентификаторов пользователя.
+Building and validating user identifiers.
 
 ```ts
 public static PREFIX = 'user';
@@ -207,7 +212,7 @@ public static UID_REG_EXP = /^user_[0-9]{14}_[0-9a-fA-F]{64}$/;
 
 #### `createUid(created: Date, hash: string): string`
 
-Создаёт `uid` вида `user_<время:14>_<хэш:64>`. Время дополняется нулями до фиксированной ширины, поэтому идентификаторы лексикографически упорядочены по дате создания — диапазонный запрос возвращает пользователей в хронологическом порядке.
+Creates a `uid` of the form `user_<time:14>_<hash:64>`. The time is zero-padded to a fixed width, so identifiers are lexicographically ordered by creation date — a range query returns users in chronological order.
 
 ```ts
 UserUtil.createUid(new Date(), stub.transaction.hash);
@@ -216,7 +221,7 @@ UserUtil.createUid(new Date(), stub.transaction.hash);
 
 #### `create<T extends IUser>(classType: ClassType<T>, created: Date, hash: string): T`
 
-Создаёт экземпляр пользователя с заполненными `uid` и `created`.
+Creates a user instance with `uid` and `created` filled in.
 
 ```ts
 let user = UserUtil.create(User, stub.transaction.date, stub.transaction.hash);
@@ -224,11 +229,11 @@ let user = UserUtil.create(User, stub.transaction.date, stub.transaction.hash);
 
 #### `isUser(uid: UID): boolean`
 
-Проверяет соответствие идентификатора формату пользователя.
+Checks whether an identifier matches the user format.
 
 #### `seed<T extends IUser>(classType: ClassType<T>, created?: Date, hash?: string): T`
 
-Создаёт системного пользователя с нулевыми датой и хэшем — детерминированный `uid`, одинаковый на всех узлах сети. Используется при инициализации канала.
+Creates a system user with a zero date and hash — a deterministic `uid` that is identical on every node of the network. Used when initializing a channel.
 
 ```ts
 let seed = UserUtil.seed(User);
@@ -237,7 +242,7 @@ let seed = UserUtil.seed(User);
 
 ### IUser
 
-Интерфейс пользователя, параметризованный типами статуса и роли.
+The user interface, parameterized by status and role types.
 
 ```ts
 export interface IUser<S = string, R = string> extends IUIDable {
@@ -251,7 +256,7 @@ export interface IUser<S = string, R = string> extends IUIDable {
 }
 ```
 
-Конкретный проект подставляет свои перечисления:
+A specific project plugs in its own enumerations:
 
 ```ts
 class User implements IUser<UserStatus, UserRole> { ... }
@@ -259,7 +264,7 @@ class User implements IUser<UserStatus, UserRole> { ... }
 
 ### CryptoKey
 
-Описание криптографического ключа: значение и алгоритм.
+A description of a cryptographic key: value and algorithm.
 
 ```ts
 export class CryptoKey implements ICryptoKey {
@@ -270,11 +275,11 @@ export class CryptoKey implements ICryptoKey {
 }
 ```
 
-Поля размечены декораторами `class-validator`, поэтому объект проверяется теми же средствами, что и остальные сущности при записи в состояние.
+The fields are annotated with `class-validator` decorators, so the object is validated with the same tooling as the rest of the entities when written to state.
 
 ### HlfTransportCommand
 
-Транспортные команды с признаком «только чтение».
+Transport commands with a "read-only" flag.
 
 ```ts
 export class HlfTransportCommand<T> extends TransportCommand<T> {
@@ -286,21 +291,21 @@ export class HlfTransportCommandAsync<U, V> extends TransportCommandAsync<U, V> 
 }
 ```
 
-`isReadonly` позволяет транспорту отличать запросы, не меняющие состояние, и обрабатывать их дешевле — без отправки транзакции на подтверждение.
+`isReadonly` lets the transport distinguish requests that do not change state and handle them more cheaply — without sending a transaction for endorsement.
 
 ```ts
 export class CoinGetCommand extends HlfTransportCommandAsync<ICoinGetDto, Coin> {
     public static readonly NAME = 'CoinGet';
 
     constructor(request: ICoinGetDto) {
-        super(CoinGetCommand.NAME, request, undefined, true);   // только чтение
+        super(CoinGetCommand.NAME, request, undefined, true);   // read-only
     }
 }
 ```
 
 ### InitiatedDto
 
-Добавляет к DTO инициатора операции.
+Adds an operation initiator to a DTO.
 
 ```ts
 export interface IInitiatedDto {
@@ -314,7 +319,7 @@ export class InitiatedDto implements IInitiatedDto {
 }
 ```
 
-Используется как база для команд и событий, где нужно знать, от чьего имени выполнено действие — отдельно от того, кто подписал транзакцию.
+Used as a base for commands and events where you need to know on whose behalf an action was performed — separately from who signed the transaction.
 
 ```ts
 export class CoinEmittedEventDto extends InitiatedDto {
@@ -325,7 +330,7 @@ export class CoinEmittedEventDto extends InitiatedDto {
 
 ### Error
 
-Каркас доменных ошибок пакета.
+The package's domain error framework.
 
 ```ts
 export class Error<T = void> extends ExtendedError<T, ErrorCode> {
@@ -334,13 +339,13 @@ export class Error<T = void> extends ExtendedError<T, ErrorCode> {
 }
 ```
 
-Ошибка несёт машиночитаемый код и детали, а сообщением становится имя класса. Это позволяет обрабатывать её по коду на другой стороне транспорта, где стек уже недоступен.
+An error carries a machine-readable code and details, while its message is the class name. This makes it possible to handle it by code on the other side of the transport, where the stack is no longer available.
 
-#### Коды ошибок
+#### Error Codes
 
-| Код | Класс | Когда возникает |
+| Code | Class | When it occurs |
 |---|---|---|
-| `HLF_STATE_KEY_SEGMENT_INVALID` | `StateKeySegmentInvalidError` | часть ключа пустая или содержит `~` либо `:` |
+| `HLF_STATE_KEY_SEGMENT_INVALID` | `StateKeySegmentInvalidError` | a key segment is empty or contains `~` or `:` |
 
 ```ts
 try {
@@ -354,9 +359,9 @@ catch (error) {
 }
 ```
 
-## Примеры использования
+## Usage Examples
 
-### Ключи аккаунтов
+### Account keys
 
 ```ts
 import { StateKey } from '@hlf-core/common';
@@ -365,43 +370,43 @@ export class CoinAccountUtil {
     public static PREFIX = '→coin~account';
     public static KEY = new StateKey(CoinAccountUtil.PREFIX);
 
-    // точный ключ аккаунта
+    // exact account key
     public static createUid(coin: UID, owner: UID): string {
         return CoinAccountUtil.KEY.key(coin, owner);
     }
 
-    // префикс для перечисления всех аккаунтов монеты
+    // prefix to enumerate every account of a coin
     public static createPrefix(coin: UID): string {
         return CoinAccountUtil.KEY.prefix(coin);
     }
 }
 ```
 
-Два режима разведены по разным методам, поэтому перепутать точный ключ с префиксом поиска нельзя.
+The two modes are split across separate methods, so there is no way to confuse an exact key with a search prefix.
 
-### Вторичный индекс
+### Secondary index
 
-Задача: находить ордера по монете и по паре «монета + владелец». Прямого поиска по полю в Fabric нет, поэтому рядом с записью хранится ключ-указатель.
+The task: find orders by coin and by the "coin + owner" pair. Fabric has no direct lookup by field, so a pointer key is stored next to the record.
 
 ```ts
 let index = new StateKey('→otc~hold');
 
-// при создании ордера
+// when an order is created
 await stub.putStateRaw(index.key(coinUid, ownerUid, otcUid), otcUid);
 
-// все ордера по монете
+// all orders for a coin
 let byCoin = await stub.getStateByRange(index.prefix(coinUid), ...);
 
-// ордера конкретного владельца по этой монете
+// orders of a specific owner for this coin
 let byOwner = await stub.getStateByRange(index.prefix(coinUid, ownerUid), ...);
 
-// при удалении ордера
+// when an order is deleted
 await stub.removeState(index.key(coinUid, ownerUid, otcUid));
 ```
 
-Один набор ключей обслуживает оба разреза за счёт порядка частей: от общего к частному.
+A single set of keys serves both slices thanks to the order of the segments: from the general to the specific.
 
-### Разбор ключа
+### Decomposing a key
 
 ```ts
 let key = new StateKey('→coin~account');
@@ -412,70 +417,70 @@ let items = key.decompose(uid);   // ['coin_user_X_0_RUB', 'user_abc']
 let [coinUid, ownerUid] = items;
 ```
 
-### Порядок частей имеет значение
+### Segment order matters
 
-Поиск возможен только по левой части, поэтому порядок определяет доступные разрезы:
+Lookup is only possible on the left part, so the order determines which slices are available:
 
 ```ts
-// ключ (монета, владелец): можно искать по монете и по паре
-key.prefix(coinUid);              // все владельцы этой монеты
-key.prefix(coinUid, ownerUid);    // конкретная пара
+// key (coin, owner): you can search by coin and by the pair
+key.prefix(coinUid);              // all owners of this coin
+key.prefix(coinUid, ownerUid);    // a specific pair
 
-// искать по одному владельцу этим ключом нельзя —
-// для такого разреза нужен второй набор ключей с обратным порядком
+// you cannot search by a single owner with this key —
+// such a slice needs a second set of keys with the reverse order
 let byOwner = new StateKey('→coin~owner');
 await stub.putStateRaw(byOwner.key(ownerUid, coinUid), uid);
 ```
 
-## Структура проекта
+## Project Structure
 
 ```
 src/
-├── Error.ts                      доменные ошибки и коды
-├── public-api.ts                 публичный API пакета
+├── Error.ts                      domain errors and codes
+├── public-api.ts                 the package's public API
 ├── state/
-│   ├── StateKey.ts               сборка ключей состояния
+│   ├── StateKey.ts               state key construction
 │   └── index.ts
 ├── user/
-│   ├── IUser.ts                  интерфейс пользователя
-│   ├── UserUtil.ts               идентификаторы пользователя
+│   ├── IUser.ts                  user interface
+│   ├── UserUtil.ts               user identifiers
 │   └── index.ts
 ├── crypto/
-│   ├── ICryptoKey.ts             интерфейс криптографического ключа
-│   ├── CryptoKey.ts              реализация с валидацией
+│   ├── ICryptoKey.ts             cryptographic key interface
+│   ├── CryptoKey.ts              implementation with validation
 │   └── index.ts
 └── transport/
-    ├── HlfTransportCommand.ts    команды с признаком isReadonly
-    ├── IInitiatedDto.ts          инициатор операции
+    ├── HlfTransportCommand.ts    commands with the isReadonly flag
+    ├── IInitiatedDto.ts          operation initiator
     └── index.ts
 ```
 
-## История изменений
+## Changelog
 
 ### 3.2.6
 
-- Добавлен `StateKey` — единая сборка ключей состояния с обязательным разделителем в префиксах и валидацией частей
-- Добавлен `Error` с кодами `ErrorCode` и первая ошибка `StateKeySegmentInvalidError`
+- Added `StateKey` — unified state key construction with a mandatory separator in prefixes and segment validation
+- Added `Error` with `ErrorCode` codes and the first error, `StateKeySegmentInvalidError`
 
-Изменения только добавляющие, существующий API не затронут. Формат ключей, которые собирает `StateKey`, совпадает с форматом, применявшимся в пакетах экосистемы ранее, поэтому перевод существующего кода на `StateKey` не требует миграции состояния.
+The changes are additive only; the existing API is untouched. The key format produced by `StateKey` matches the one previously used across the ecosystem packages, so migrating existing code to `StateKey` requires no state migration.
 
-## Лицензия
+## License
 
 ISC
 
-## Автор
+## Author
 
-**Ренат Губаев**
+**Renat Gubaev**
 - Email: renat.gubaev@gmail.com
 - GitHub: [@ManhattanDoctor](https://github.com/ManhattanDoctor)
 
-## Ссылки
+## Links
 
 - [GitHub Repository](https://github.com/ManhattanDoctor/hlf-core-common)
 - [NPM Package](https://www.npmjs.com/package/@hlf-core/common)
 - [Issue Tracker](https://github.com/ManhattanDoctor/hlf-core-common/issues)
 - [Hyperledger Fabric Documentation](https://hyperledger-fabric.readthedocs.io/)
 
-## Поддержка
+## Support
 
-Если вы нашли баг или у вас есть предложение по улучшению, пожалуйста, создайте issue в [GitHub Issues](https://github.com/ManhattanDoctor/hlf-core-common/issues).
+If you found a bug or have a suggestion for improvement, please open an issue in [GitHub Issues](https://github.com/ManhattanDoctor/hlf-core-common/issues).
